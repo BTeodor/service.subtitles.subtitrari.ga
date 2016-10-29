@@ -57,38 +57,10 @@ def load_url(path):
     req = s.get(uri)
     req.encoding = 'ISO-8859-9'
     res = req.text.encode('ISO-8859-9')
-    log(res)
+    # log(res)
     subtitles = json.loads(res)
    
     return subtitles
-
-
-def get_media_url(media_args):
-    log('getting media url')
-    querytype = media_args[0]
-    title = re.sub(" \(?(.*.)\)", "", media_args[1])
-
-    subtitles = load_url('search?search=%s' % title)
-
-    for subtitle in subtitles:
-        return 
-    redirect_url = [sc.getText() for sc in page.findAll('script') if 'location.href' in sc.getText()]
-    if len(redirect_url) > 0:
-        a = redirect_url[0]
-        episode_uri = a[a.find('"')+1:a.rfind('"')]
-        log('Found uri via redirect')
-        return episode_uri
-
-    for result in page.findAll('td', attrs={'width': '60%'}):
-        link = result.find('a')
-        link_title = link.find('b').getText().strip()
-        if querytype == "film":
-            if str(year) == "" or str(year) in result.getText():
-                return link["href"]
-        elif querytype == "dizi" and link_title.startswith('"'):
-            if str(year) == "" or str(year) in result.getText():
-                return link["href"]
-    raise ValueError('No valid results')
 
 
 def search(mitem):
@@ -100,7 +72,7 @@ def search(mitem):
 
     # Build an adequate string according to media type
     if len(tvshow) != 0:
-        log("[SEARCH TVSHOW] Divxplanet: searching subtitles for %s %s %s %s" % (tvshow, year, season, episode))
+        log("[SEARCH TVSHOW] Subtitrari.ga: searching subtitles for %s %s %s %s" % (tvshow, year, season, episode))
         
         subtitles = load_url('search?search=%s&season=%s&episode=%s' % (tvshow, int(season), int(episode)))
     
@@ -131,9 +103,9 @@ def search(mitem):
                 isFolder=False
             )
 
-        log("Divxplanet: found %d subtitles" % (len(subtitles_list)))
+        log("Subtitrari.ga: found %d subtitles" % (len(subtitles_list)))
     else:
-        log("[SEARCH !TVSHOW] Divxplanet: searching subtitles for %s" % (title))
+        log("[SEARCH !TVSHOW] Subtitrari.ga: searching subtitles for %s" % (title))
 
         subtitles = load_url('search?search=%s' % title)
     
@@ -163,7 +135,7 @@ def search(mitem):
                 listitem=l_item,
                 isFolder=False
             )
-        log("[SEARCH END]Divxplanet: found %d subtitles" % (len(subtitles_list)))
+        log("[SEARCH END]Subtitrari.ga: found %d subtitles" % (len(subtitles_list)))
 
 
 def download(link):
@@ -195,7 +167,7 @@ def download(link):
         if string.split(f, '.')[-1] in ['srt', 'sub']:
             subs_file = os.path.join(extract_path, f)
             subtitle_list.append(subs_file)
-            log("Divxplanet: Subtitles saved to '%s'" % local_tmp_file)
+            log("Subtitrari.ga: Subtitles saved to '%s'" % local_tmp_file)
     return subtitle_list
 
 
